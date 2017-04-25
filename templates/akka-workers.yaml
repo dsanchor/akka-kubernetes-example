@@ -15,11 +15,10 @@ spec:
     spec:
       containers:
       - name: akka-worker
-#        image: akka-cluster
-        image: 172.30.1.1:5000/microservices/akka-cluster@sha256:b63cdc681658e54c844c3279f2aca1159bb74ddcf482e83ef45c165ac55384e5
+        image: akka-cluster-listener
         env:
-        - name: SEED_NODES
-          value: akka-seed-0.akka-seed,akka-seed-1.akka-seed
+        - name: JAVA_OPTIONS
+          value: "-Dakka.cluster.seed-nodes.0=akka.tcp://ClusterSystem@akka-seed-0.akka-seed:2551 -Dakka.cluster.seed-nodes.1=akka.tcp://ClusterSystem@akka-seed-1.akka-seed:2551"
         - name: HOSTNAME
           valueFrom:
             fieldRef:

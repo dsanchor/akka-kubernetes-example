@@ -26,13 +26,5 @@ public class SimpleClusterMain {
   public static void main(String[] args) throws IOException {
     ActorSystem actorSystem = ActorSystem.create(CLUSTER_NAME);
     actorSystem.actorOf(SimpleClusterListener.props());
-//    final ActorMaterializer materializer = ActorMaterializer.create(actorSystem);
-//
-//    Cluster cluster = Cluster.get(actorSystem);
-//    List<Address> addresses = Arrays.asList(System.getenv().get("SEED_NODES").split(","))
-//        .stream()
-//        .map(ip -> new Address("akka.tcp", CLUSTER_NAME, ip, 2551))
-//        .collect(Collectors.toList());
-//    cluster.joinSeedNodes(addresses);
   }
 }

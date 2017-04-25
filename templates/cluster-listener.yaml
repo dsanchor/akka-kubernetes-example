@@ -1,0 +1,37 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: akka-cluster-listener
+    name: akka-cluster-listener
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      app: akka-cluster-listener
+    name: akka-cluster-listener
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: akka-cluster-listener:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      git:
+        uri: https://github.com/dsanchor/akka-openshift-cluster.git
+      contextDir: cluster-listener
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: s2i-java:latest
+          namespace: openshift
+      type: Source
+kind: List
+metadata: {}
+
