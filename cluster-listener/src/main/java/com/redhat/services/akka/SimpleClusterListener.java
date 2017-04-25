@@ -14,7 +14,7 @@
  * limitations under the License
  */
 
-package com.example.akka;
+package com.redhat.services.akka;
 
 import akka.actor.Props;
 import akka.actor.UntypedActor;

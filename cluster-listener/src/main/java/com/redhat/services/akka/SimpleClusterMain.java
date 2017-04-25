@@ -14,17 +14,11 @@
  * limitations under the License
  */
 
-package com.example.akka;
-
-import akka.actor.ActorSystem;
-import akka.actor.Address;
-import akka.cluster.Cluster;
-import akka.stream.ActorMaterializer;
+package com.redhat.services.akka;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import akka.actor.ActorSystem;
 
 public class SimpleClusterMain {
   private static final String CLUSTER_NAME = "ClusterSystem";
@@ -32,13 +26,13 @@ public class SimpleClusterMain {
   public static void main(String[] args) throws IOException {
     ActorSystem actorSystem = ActorSystem.create(CLUSTER_NAME);
     actorSystem.actorOf(SimpleClusterListener.props());
-    final ActorMaterializer materializer = ActorMaterializer.create(actorSystem);
-
-    Cluster cluster = Cluster.get(actorSystem);
-    List<Address> addresses = Arrays.asList(System.getenv().get("SEED_NODES").split(","))
-        .stream()
-        .map(ip -> new Address("akka.tcp", CLUSTER_NAME, ip, 2551))
-        .collect(Collectors.toList());
-    cluster.joinSeedNodes(addresses);
+//    final ActorMaterializer materializer = ActorMaterializer.create(actorSystem);
+//
+//    Cluster cluster = Cluster.get(actorSystem);
+//    List<Address> addresses = Arrays.asList(System.getenv().get("SEED_NODES").split(","))
+//        .stream()
+//        .map(ip -> new Address("akka.tcp", CLUSTER_NAME, ip, 2551))
+//        .collect(Collectors.toList());
+//    cluster.joinSeedNodes(addresses);
   }
 }
