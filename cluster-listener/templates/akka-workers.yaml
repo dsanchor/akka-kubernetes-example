@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: cluster-listener-akka-worker
-        image:  cluster-listener-akka
+        image: 172.30.1.1:5000/microservices/cluster-listener-akka:latest
         env:
         - name: JAVA_OPTIONS
           value: "-Dakka.cluster.seed-nodes.0=akka.tcp://ClusterSystem@cluster-listener-akka-seed-0.cluster-listener-akka-seed:2551 -Dakka.cluster.seed-nodes.1=akka.tcp://ClusterSystem@cluster-listener-akka-seed-1.cluster-listener-akka-seed:2551"

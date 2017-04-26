@@ -4,19 +4,19 @@ items:
   kind: ImageStream
   metadata:
     labels:
-      app: akka-cluster-listener
-    name: akka-cluster-listener
+      app: cluster-listener-akka
+    name: cluster-listener-akka
 - apiVersion: v1
   kind: BuildConfig
   metadata:
     labels:
-      app: akka-cluster-listener
-    name: akka-cluster-listener
+      app: cluster-listener-akka
+    name: cluster-listener-akka
   spec:
     output:
       to:
         kind: ImageStreamTag
-        name: akka-cluster-listener:latest
+        name: cluster-listener-akka:latest
     postCommit: {}
     resources: {}
     runPolicy: Serial
