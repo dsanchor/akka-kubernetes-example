@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-world-akka-seed
+spec:
+  ports:
+  - port: 2551
+    protocol: TCP
+    targetPort: 2551
+  selector:
+    app: hello-world-akka-seed
+  clusterIP: None
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  labels:
+    app: hello-world-akka-seed
+  name: hello-world-akka-seed
+spec:
+  serviceName: hello-world-akka-seed
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hello-world-akka-seed
+  template:
+    metadata:
+      labels:
+        app: hello-world-akka-seed
+    spec:
+      containers:
+      - name: hello-world-akka-seed
+        image: hello-world-akka
+        env:
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: HOSTNAME_SUFFIX
+          value: .hello-world-akka-seed
+        - name: JAVA_OPTIONS
+          value: "-Dakka.cluster.seed-nodes.0=akka.tcp://ClusterSystem@hello-world-akka-seed-0.hello-world-akka-seed:2551 -Dakka.cluster.seed-nodes.1=akka.tcp://ClusterSystem@hello-world-akka-seed-1.hello-world-akka-seed:2551"
+        - name: JAVA_APP_JAR
+          value: app.jar
+        - name: AB_JOLOKIA_OFF
+          value: ""
+        livenessProbe:
+          tcpSocket:
+            port: 2551
+        ports:
+        - containerPort: 2551
+          protocol: TCP

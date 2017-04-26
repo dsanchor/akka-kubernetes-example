@@ -1,36 +1,36 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: akka-seed
+  name: cluster-listener-akka-seed
 spec:
   ports:
   - port: 2551
     protocol: TCP
     targetPort: 2551
   selector:
-    run: akka-seed
+    app: cluster-listener-akka-seed
   clusterIP: None
 ---
 apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
   labels:
-    run: akka-seed
-  name: akka-seed
+    app: cluster-listener-akka-seed
+  name: cluster-listener-akka-seed
 spec:
-  serviceName: akka-seed
+  serviceName: cluster-listener-akka-seed
   replicas: 2
   selector:
     matchLabels:
-      run: akka-seed
+      app: cluster-listener-akka-seed
   template:
     metadata:
       labels:
-        run: akka-seed
+        app: cluster-listener-akka-seed
     spec:
       containers:
-      - name: akka-seed
-        image: akka-cluster-listener
+      - name: cluster-listener-akka-seed
+        image: cluster-listener-akka
         env:
         - name: HOSTNAME
           valueFrom:
@@ -39,7 +39,7 @@ spec:
         - name: HOSTNAME_SUFFIX
           value: .akka-seed
         - name: JAVA_OPTIONS
-          value: "-Dakka.cluster.seed-nodes.0=akka.tcp://ClusterSystem@akka-seed-0.akka-seed:2551 -Dakka.cluster.seed-nodes.1=akka.tcp://ClusterSystem@akka-seed-1.akka-seed:2551"
+          value: "-Dakka.cluster.seed-nodes.0=akka.tcp://ClusterSystem@cluster-listener-akka-seed-0.cluster-listener-akka-seed:2551 -Dakka.cluster.seed-nodes.1=akka.tcp://ClusterSystem@cluster-listener-akka-seed-1.cluster-listener-akka-seed:2551"
         - name: JAVA_APP_JAR
           value: app.jar
         - name: AB_JOLOKIA_OFF
