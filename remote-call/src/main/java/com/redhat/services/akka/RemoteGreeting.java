@@ -4,7 +4,10 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
 import akka.actor.UntypedActor;
 import akka.cluster.Cluster;
+import akka.cluster.ClusterEvent;
+import akka.cluster.ClusterEvent.MemberEvent;
 import akka.cluster.ClusterEvent.MemberUp;
+import akka.cluster.ClusterEvent.UnreachableMember;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 
@@ -35,20 +38,21 @@ public class RemoteGreeting extends UntypedActor {
 		}
 	}
 
-	// // subscribe to cluster changes
-	// @Override
-	// public void preStart() {
-	// // #subscribe
-	// cluster.subscribe(getSelf(), ClusterEvent.initialStateAsEvents(),
-	// MemberEvent.class, UnreachableMember.class);
-	// // #subscribe
-	// }
-	//
-	// // re-subscribe when restart
-	// @Override
-	// public void postStop() {
-	// cluster.unsubscribe(getSelf());
-	// }
+	 // subscribe to cluster changes
+	 @Override
+	 public void preStart() {
+	 // #subscribe
+	 cluster.subscribe(getSelf(), ClusterEvent.initialStateAsEvents(),
+	 MemberEvent.class, UnreachableMember.class);
+	 // #subscribe
+	 }
+	
+	 // re-subscribe when restart
+	 @Override
+	 public void postStop() {
+	 cluster.unsubscribe(getSelf());
+	 }
+	 
 	//
 	// private void sendIdentifyRequest() {
 	// getContext().actorSelection(path).tell(new Identify(path), getSelf());
