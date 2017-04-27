@@ -33,6 +33,8 @@ public class RemoteGreeting extends UntypedActor {
 			ActorSelection actorSelection = getContext().actorSelection(path);
 			helloWorld = actorSelection.anchor();
 			helloWorld.tell(mUp.member().address().hostPort(), getSelf());
+		if (message instanceof String) {
+			log.info("Message received is {}", message);
 		} else {
 		      unhandled(message);
 		}
