@@ -29,6 +29,7 @@ public class RemoteGreeting extends UntypedActor {
 
 	public RemoteGreeting(String path) {
 		this.path = path;
+		sendIdentifyRequest();
 	}
 
 	// subscribe to cluster changes
@@ -53,7 +54,12 @@ public class RemoteGreeting extends UntypedActor {
 
 	@Override
 	public void onReceive(Object message) throws Exception {
-		if (message instanceof ActorIdentity) {
+		if (message instanceof MemberUp) {
+			MemberUp mUp = (MemberUp) message;
+			log.info("Member is Up: {}", mUp.member());
+			helloWorld.tell(mUp.member().address().hostPort(), getSelf());
+
+		} else if (message instanceof ActorIdentity) {
 			helloWorld = ((ActorIdentity) message).getRef();
 			if (helloWorld == null) {
 				System.out.println("Remote actor not available: " + path);
@@ -74,12 +80,7 @@ public class RemoteGreeting extends UntypedActor {
 	Procedure<Object> active = new Procedure<Object>() {
 		@Override
 		public void apply(Object message) {
-			if (message instanceof MemberUp) {
-				MemberUp mUp = (MemberUp) message;
-				log.info("Member is Up: {}", mUp.member());
-				helloWorld.tell(mUp.member().address().hostPort(), getSelf());
-
-			} else if (message instanceof Terminated) {
+			 if (message instanceof Terminated) {
 				System.out.println("HelloWorld terminated");
 				sendIdentifyRequest();
 				getContext().unbecome();
