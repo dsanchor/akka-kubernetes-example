@@ -28,6 +28,7 @@ public class RemoteGreeting extends UntypedActor {
 	Cluster cluster = Cluster.get(getContext().system());
 
 	public RemoteGreeting(String path) {
+		log.info("Constructing remote greeting actor");
 		this.path = path;
 		sendIdentifyRequest();
 	}
@@ -36,6 +37,7 @@ public class RemoteGreeting extends UntypedActor {
 	@Override
 	public void preStart() {
 		// #subscribe
+		log.info("Subscribing remote greeting actor to cluster events");
 		cluster.subscribe(getSelf(), ClusterEvent.initialStateAsEvents(), MemberEvent.class, UnreachableMember.class);
 		// #subscribe
 	}
@@ -43,6 +45,7 @@ public class RemoteGreeting extends UntypedActor {
 	// re-subscribe when restart
 	@Override
 	public void postStop() {
+		log.info("Unsubscribing remote greeting actor to cluster events");
 		cluster.unsubscribe(getSelf());
 	}
 
