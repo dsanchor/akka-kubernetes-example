@@ -1,6 +1,12 @@
 package com.redhat.services.akka;
 
+import java.util.concurrent.TimeUnit;
+
+import akka.actor.ActorIdentity;
 import akka.actor.ActorRef;
+import akka.actor.Identify;
+import akka.actor.ReceiveTimeout;
+import akka.actor.Terminated;
 import akka.actor.UntypedActor;
 import akka.cluster.Cluster;
 import akka.cluster.ClusterEvent;
@@ -9,6 +15,8 @@ import akka.cluster.ClusterEvent.MemberUp;
 import akka.cluster.ClusterEvent.UnreachableMember;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import akka.japi.Procedure;
+import scala.concurrent.duration.Duration;
 
 public class RemoteGreeting extends UntypedActor {
 
@@ -37,20 +45,54 @@ public class RemoteGreeting extends UntypedActor {
 		cluster.unsubscribe(getSelf());
 	}
 
-	@Override
-	public void onReceive(Object message) {
-		if (message instanceof MemberUp) {
-			MemberUp mUp = (MemberUp) message;
-			log.info("Member is Up: {}", mUp.member());
-			 getContext().actorSelection(path).tell(mUp.member().address().hostPort(),getSelf());
+	private void sendIdentifyRequest() {
+		getContext().actorSelection(path).tell(new Identify(path), getSelf());
+		getContext().system().scheduler().scheduleOnce(Duration.create(3, TimeUnit.SECONDS), getSelf(),
+				ReceiveTimeout.getInstance(), getContext().dispatcher(), getSelf());
+	}
 
-		} else if (message instanceof MemberEvent) {
-			// ignore
-		} else if (message instanceof String) {
-			log.info((String)message);
+	@Override
+	public void onReceive(Object message) throws Exception {
+		if (message instanceof ActorIdentity) {
+			helloWorld = ((ActorIdentity) message).getRef();
+			if (helloWorld == null) {
+				System.out.println("Remote actor not available: " + path);
+			} else {
+				getContext().watch(helloWorld);
+				getContext().become(active, true);
+			}
+
+		} else if (message instanceof ReceiveTimeout) {
+			sendIdentifyRequest();
 
 		} else {
-			unhandled(message);
+			System.out.println("Not ready yet");
+
 		}
 	}
+
+	Procedure<Object> active = new Procedure<Object>() {
+		@Override
+		public void apply(Object message) {
+			if (message instanceof MemberUp) {
+				MemberUp mUp = (MemberUp) message;
+				log.info("Member is Up: {}", mUp.member());
+				helloWorld.tell(mUp.member().address().hostPort(), getSelf());
+
+			} else if (message instanceof Terminated) {
+				System.out.println("HelloWorld terminated");
+				sendIdentifyRequest();
+				getContext().unbecome();
+
+			} else if (message instanceof ReceiveTimeout) {
+				// ignore
+			} else if (message instanceof String) {
+				log.info((String) message);
+
+			} else {
+				unhandled(message);
+			}
+
+		}
+	};
 }
