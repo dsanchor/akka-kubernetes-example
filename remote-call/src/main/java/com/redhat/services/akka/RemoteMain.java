@@ -12,7 +12,7 @@ import scala.concurrent.duration.Duration;
 public class RemoteMain {
   private static final String CLUSTER_NAME = "RemoteGreetingSystem";
   
-  private static final String REMOTE_PATH = "remote.service.path";
+  private static final String REMOTE_PATH = "REMOTE_SERVICE_PATH";
   
   private static final String[] names = new String[]{"David", "Michael", "Alex", "George", "Jose"};
 

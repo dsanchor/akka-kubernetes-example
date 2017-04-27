@@ -39,11 +39,13 @@ spec:
         - name: HOSTNAME_SUFFIX
           value: .remote-call-akka-seed
         - name: JAVA_OPTIONS
-          value: "-Dakka.cluster.seed-nodes.0=akka.tcp://HelloWorldSystem@remote-call-akka-seed-0.remote-call-akka-seed:2551 -Dakka.cluster.seed-nodes.1=akka.tcp://HelloWorldSystem@remote-call-akka-seed-1.remote-call-akka-seed:2551"
+          value: "-Dakka.cluster.seed-nodes.0=akka.tcp://RemoteGreetingSystem@remote-call-akka-seed-0.remote-call-akka-seed:2551 -Dakka.cluster.seed-nodes.1=akka.tcp://RemoteGreetingSystem@remote-call-akka-seed-1.remote-call-akka-seed:2551"
         - name: JAVA_APP_JAR
           value: app.jar
         - name: AB_JOLOKIA_OFF
           value: ""
+        - name: REMOTE_SERVICE_PATH
+          value: "akka.tcp://HelloWorldSystem@hello-world-akka-seed-0.hello-world-akka-seed:2551"
         livenessProbe:
           tcpSocket:
             port: 2551
