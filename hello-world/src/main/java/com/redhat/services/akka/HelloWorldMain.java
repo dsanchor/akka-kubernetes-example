@@ -10,6 +10,6 @@ public class HelloWorldMain {
 
   public static void main(String[] args) throws IOException {
     ActorSystem actorSystem = ActorSystem.create(CLUSTER_NAME);
-    actorSystem.actorOf(Props.create(HelloWorld.class));
+    actorSystem.actorOf(Props.create(HelloWorld.class), "helloWorld");
   }
 }
