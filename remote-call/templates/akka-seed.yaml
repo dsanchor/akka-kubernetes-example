@@ -45,7 +45,7 @@ spec:
         - name: AB_JOLOKIA_OFF
           value: ""
         - name: REMOTE_SERVICE_PATH
-          value: "akka.tcp://HelloWorldSystem@hello-world-akka-seed-0.hello-world-akka-seed:2551"
+          value: "akka.tcp://HelloWorldSystem@hello-world-akka-seed-0.hello-world-akka-seed:2551/user/HelloWorld"
         livenessProbe:
           tcpSocket:
             port: 2551
