@@ -60,7 +60,8 @@ public class RemoteGreeting extends UntypedActor {
 		if (message instanceof MemberUp) {
 			MemberUp mUp = (MemberUp) message;
 			log.info("Member is Up: {}", mUp.member());
-			helloWorld.tell(mUp.member().address().hostPort(), getSelf());
+			getContext().actorSelection(path).tell(mUp.member().address().hostPort(), getSelf());
+//			helloWorld.tell(mUp.member().address().hostPort(), getSelf());
 
 		} else if (message instanceof ActorIdentity) {
 			helloWorld = ((ActorIdentity) message).getRef();

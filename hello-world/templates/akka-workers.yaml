@@ -19,6 +19,8 @@ spec:
         env:
         - name: JAVA_OPTIONS
           value: "-Dakka.cluster.seed-nodes.0=akka.tcp://HelloWorldSystem@hello-world-akka-seed-0.hello-world-akka-seed:2551 -Dakka.cluster.seed-nodes.1=akka.tcp://HelloWorldSystem@hello-world-akka-seed-1.hello-world-akka-seed:2551"
+        - name: CLUSTER
+          value: HelloWorldSystem
         - name: HOSTNAME
           valueFrom:
             fieldRef:

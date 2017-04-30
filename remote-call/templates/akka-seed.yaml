@@ -40,6 +40,8 @@ spec:
           value: .remote-call-akka-seed
         - name: JAVA_OPTIONS
           value: "-Dakka.cluster.seed-nodes.0=akka.tcp://RemoteGreetingSystem@remote-call-akka-seed-0.remote-call-akka-seed:2551 -Dakka.cluster.seed-nodes.1=akka.tcp://RemoteGreetingSystem@remote-call-akka-seed-1.remote-call-akka-seed:2551"
+        - name: CLUSTER
+          value: RemoteGreetingSystem
         - name: JAVA_APP_JAR
           value: app.jar
         - name: AB_JOLOKIA_OFF
