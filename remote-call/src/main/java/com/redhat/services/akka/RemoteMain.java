@@ -13,7 +13,7 @@ public class RemoteMain {
 	private static final String REMOTE_PATH = "REMOTE_SERVICE_PATH";
 
 	public static void main(String[] args) throws IOException {
-		ActorSystem actorSystem = ActorSystem.create(getClusterName(), ConfigFactory.load("router.conf"));
+		ActorSystem actorSystem = ActorSystem.create(getClusterName());
 		actorSystem.actorOf(Props.create(RemoteGreeting.class, getRemotePath()), "remoteGreeting");
 		System.out.println("Started RemoteGreetingSystem");
 	}
