@@ -27,6 +27,8 @@ import scala.concurrent.duration.FiniteDuration;
 public class RemoteGreeting extends UntypedActor {
 
 	final String servicePath;
+	final String address;
+
 	final Cancellable greetingTask;
 	final Set<Address> nodes = new HashSet<Address>();
 
@@ -63,9 +65,6 @@ public class RemoteGreeting extends UntypedActor {
 //				if (nodes != null && nodes.size() > 0) {
 					System.out.println("Sending message:" + message);
 
-					// just pick any one
-					List<Address> nodesList = new ArrayList<>(nodes);
-					Address address = nodesList.get(ThreadLocalRandom.current().nextInt(nodesList.size()));
 					ActorSelection service = getContext().actorSelection(address + servicePath);
 					service.tell(message, self());
 //				} else {
