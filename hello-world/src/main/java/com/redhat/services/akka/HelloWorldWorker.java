@@ -6,7 +6,7 @@ import akka.actor.ReceiveTimeout;
 import akka.actor.UntypedActor;
 import akka.cluster.ClusterEvent.MemberUp;
 
-public class HelloWorld extends UntypedActor {
+public class HelloWorldWorker extends UntypedActor {
 	
 	@Override
 	public void onReceive(Object message) throws Exception {
