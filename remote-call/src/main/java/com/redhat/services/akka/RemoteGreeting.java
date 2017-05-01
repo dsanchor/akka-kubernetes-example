@@ -30,11 +30,10 @@ public class RemoteGreeting extends UntypedActor {
 	final Set<Address> nodes = new HashSet<Address>();
 
 	Cluster cluster = Cluster.get(getContext().system());
-	
-	private static String NAME = "David";
-	
-	private static String ROLE = "hello-world";
 
+	private static String NAME = "David";
+
+	private static String ROLE = "hello-world";
 
 	public RemoteGreeting(String servicePath) {
 		this.servicePath = servicePath;
@@ -60,34 +59,38 @@ public class RemoteGreeting extends UntypedActor {
 	public void onReceive(Object message) throws Throwable {
 		if (message instanceof String) {
 			if (NAME.equals(message)) {
-				System.out.println("Sending message:" + message);
+				if (nodes != null && nodes.size() > 0) {
+					System.out.println("Sending message:" + message);
 
-				// just pick any one
-				List<Address> nodesList = new ArrayList<>(nodes);
-				Address address = nodesList.get(ThreadLocalRandom.current().nextInt(nodesList.size()));
-				ActorSelection service = getContext().actorSelection(address + servicePath);
-				service.tell(message, self());
+					// just pick any one
+					List<Address> nodesList = new ArrayList<>(nodes);
+					Address address = nodesList.get(ThreadLocalRandom.current().nextInt(nodesList.size()));
+					ActorSelection service = getContext().actorSelection(address + servicePath);
+					service.tell(message, self());
+				} else {
+					System.out.println("No remote servers available!!!");
+				}
 
 			} else {
 				System.out.println("Response:" + message);
 			}
 		} else if (message instanceof CurrentClusterState) {
 			nodes.clear();
-			for (Member member : ((CurrentClusterState)message).getMembers()) {
+			for (Member member : ((CurrentClusterState) message).getMembers()) {
 				if (member.hasRole(ROLE) && member.status().equals(MemberStatus.up())) {
 					nodes.add(member.address());
 				}
 			}
 		} else if (message instanceof MemberUp) {
-			if (((MemberUp)message).member().hasRole(ROLE))
-				nodes.add(((MemberUp)message).member().address());
+			if (((MemberUp) message).member().hasRole(ROLE))
+				nodes.add(((MemberUp) message).member().address());
 		} else if (message instanceof MemberEvent) {
-			nodes.remove(((MemberEvent)message).member().address());
+			nodes.remove(((MemberEvent) message).member().address());
 		} else if (message instanceof UnreachableMember) {
-			nodes.remove(((UnreachableMember)message).member().address());
+			nodes.remove(((UnreachableMember) message).member().address());
 		} else if (message instanceof ReachableMember) {
-			if (((ReachableMember)message).member().hasRole(ROLE))
-				nodes.add(((ReachableMember)message).member().address());
+			if (((ReachableMember) message).member().hasRole(ROLE))
+				nodes.add(((ReachableMember) message).member().address());
 		} else {
 			unhandled(message);
 
