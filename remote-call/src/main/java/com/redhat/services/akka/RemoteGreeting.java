@@ -11,6 +11,7 @@ import akka.actor.Address;
 import akka.actor.Cancellable;
 import akka.actor.UntypedActor;
 import akka.cluster.Cluster;
+import akka.cluster.ClusterEvent;
 import akka.cluster.ClusterEvent.CurrentClusterState;
 import akka.cluster.ClusterEvent.MemberEvent;
 import akka.cluster.ClusterEvent.MemberUp;
@@ -45,7 +46,7 @@ public class RemoteGreeting extends UntypedActor {
 	// subscribe to cluster changes, MemberEvent
 	@Override
 	public void preStart() {
-		cluster.subscribe(self(), MemberEvent.class, ReachabilityEvent.class);
+		cluster.subscribe(self(),  ClusterEvent.initialStateAsEvents(), MemberEvent.class, ReachabilityEvent.class);
 	}
 
 	// re-subscribe when restart
