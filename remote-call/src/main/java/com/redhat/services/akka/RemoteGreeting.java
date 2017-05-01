@@ -36,7 +36,7 @@ public class RemoteGreeting extends UntypedActor {
 
 	private static String ROLE = "hello-world";
 
-	public RemoteGreeting(String servicePath) {
+	public RemoteGreeting(String address, String servicePath) {
 		this.servicePath = servicePath;
 		FiniteDuration interval = Duration.create(2, TimeUnit.SECONDS);
 		greetingTask = getContext().system().scheduler().schedule(interval, interval, self(), NAME,
@@ -55,7 +55,7 @@ public class RemoteGreeting extends UntypedActor {
 		cluster.unsubscribe(self());
 		greetingTask.cancel();
 	}
-
+	
 	@Override
 	public void onReceive(Object message) throws Throwable {
 		if (message instanceof String) {
@@ -75,31 +75,57 @@ public class RemoteGreeting extends UntypedActor {
 			} else {
 				System.out.println("Response:" + message);
 			}
-		} else if (message instanceof CurrentClusterState) {
-			System.out.println("Received cluster state");
-			nodes.clear();
-			for (Member member : ((CurrentClusterState) message).getMembers()) {
-				System.out.println("Member:" + member.toString());
-				if (member.hasRole(ROLE) && member.status().equals(MemberStatus.up())) {
-					nodes.add(member.address());
-				}
-			}
-		} else if (message instanceof MemberUp) {
-			if (((MemberUp) message).member().hasRole(ROLE))
-				nodes.add(((MemberUp) message).member().address());
-		} else if (message instanceof MemberEvent) {
-			nodes.remove(((MemberEvent) message).member().address());
-		} else if (message instanceof UnreachableMember) {
-			nodes.remove(((UnreachableMember) message).member().address());
-		} else if (message instanceof ReachableMember) {
-			if (((ReachableMember) message).member().hasRole(ROLE))
-				nodes.add(((ReachableMember) message).member().address());
 		} else {
 			unhandled(message);
 
 		}
 
 	}
+
+//	@Override
+//	public void onReceive(Object message) throws Throwable {
+//		if (message instanceof String) {
+//			if (NAME.equals(message)) {
+//				if (nodes != null && nodes.size() > 0) {
+//					System.out.println("Sending message:" + message);
+//
+//					// just pick any one
+//					List<Address> nodesList = new ArrayList<>(nodes);
+//					Address address = nodesList.get(ThreadLocalRandom.current().nextInt(nodesList.size()));
+//					ActorSelection service = getContext().actorSelection(address + servicePath);
+//					service.tell(message, self());
+//				} else {
+//					System.out.println("No remote servers available!!!");
+//				}
+//
+//			} else {
+//				System.out.println("Response:" + message);
+//			}
+//		} else if (message instanceof CurrentClusterState) {
+//			System.out.println("Received cluster state");
+//			nodes.clear();
+//			for (Member member : ((CurrentClusterState) message).getMembers()) {
+//				System.out.println("Member:" + member.toString());
+//				if (member.hasRole(ROLE) && member.status().equals(MemberStatus.up())) {
+//					nodes.add(member.address());
+//				}
+//			}
+//		} else if (message instanceof MemberUp) {
+//			if (((MemberUp) message).member().hasRole(ROLE))
+//				nodes.add(((MemberUp) message).member().address());
+//		} else if (message instanceof MemberEvent) {
+//			nodes.remove(((MemberEvent) message).member().address());
+//		} else if (message instanceof UnreachableMember) {
+//			nodes.remove(((UnreachableMember) message).member().address());
+//		} else if (message instanceof ReachableMember) {
+//			if (((ReachableMember) message).member().hasRole(ROLE))
+//				nodes.add(((ReachableMember) message).member().address());
+//		} else {
+//			unhandled(message);
+//
+//		}
+//
+//	}
 
 	// LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 	//
