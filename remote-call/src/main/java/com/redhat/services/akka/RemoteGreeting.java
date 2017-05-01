@@ -40,6 +40,7 @@ public class RemoteGreeting extends UntypedActor {
 
 	public RemoteGreeting(String address, String servicePath) {
 		this.servicePath = servicePath;
+		this.address = address;
 		FiniteDuration interval = Duration.create(2, TimeUnit.SECONDS);
 		greetingTask = getContext().system().scheduler().schedule(interval, interval, self(), NAME,
 				getContext().dispatcher(), null);
