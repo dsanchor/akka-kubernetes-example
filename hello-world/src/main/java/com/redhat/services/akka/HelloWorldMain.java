@@ -13,9 +13,7 @@ public class HelloWorldMain {
 	private static final String ROLE = "ROLE";
 
 	public static void main(String[] args) throws IOException {
-		Config config = ConfigFactory.parseString("akka.cluster.roles = " + getClusterRole())
-				.withFallback(ConfigFactory.load("router.conf"));
-		ActorSystem actorSystem = ActorSystem.create(getClusterName(), config);
+		ActorSystem actorSystem = ActorSystem.create(getClusterName(), ConfigFactory.load("router.conf"));
 
 		actorSystem.actorOf(Props.create(HelloWorldService.class), "helloWorldService");
 		actorSystem.actorOf(Props.create(HelloWorldWorker.class), "helloWorldWorker");
