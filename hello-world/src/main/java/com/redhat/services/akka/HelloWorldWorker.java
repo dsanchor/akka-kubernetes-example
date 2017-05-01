@@ -1,10 +1,6 @@
 package com.redhat.services.akka;
 
-import akka.actor.AbstractActor;
-import akka.actor.ActorIdentity;
-import akka.actor.ReceiveTimeout;
 import akka.actor.UntypedActor;
-import akka.cluster.ClusterEvent.MemberUp;
 
 public class HelloWorldWorker extends UntypedActor {
 	

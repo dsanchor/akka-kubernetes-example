@@ -1,11 +1,10 @@
 package com.redhat.services.akka;
 
-import akka.actor.AbstractActor.Receive;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
-import akka.routing.ConsistentHashingRouter.ConsistentHashableEnvelope;
 import akka.routing.FromConfig;
+import com.redhat.services.akka.HelloWorldWorker;
 
 public class HelloWorldService extends UntypedActor {
 
