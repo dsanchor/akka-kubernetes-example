@@ -60,7 +60,7 @@ public class RemoteGreeting extends UntypedActor {
 	public void onReceive(Object message) throws Throwable {
 		if (message instanceof String) {
 			if (NAME.equals(message)) {
-				if (nodes != null && nodes.size() > 0) {
+//				if (nodes != null && nodes.size() > 0) {
 					System.out.println("Sending message:" + message);
 
 					// just pick any one
@@ -68,9 +68,9 @@ public class RemoteGreeting extends UntypedActor {
 					Address address = nodesList.get(ThreadLocalRandom.current().nextInt(nodesList.size()));
 					ActorSelection service = getContext().actorSelection(address + servicePath);
 					service.tell(message, self());
-				} else {
-					System.out.println("No remote servers available!!!");
-				}
+//				} else {
+//					System.out.println("No remote servers available!!!");
+//				}
 
 			} else {
 				System.out.println("Response:" + message);
