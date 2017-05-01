@@ -76,8 +76,10 @@ public class RemoteGreeting extends UntypedActor {
 				System.out.println("Response:" + message);
 			}
 		} else if (message instanceof CurrentClusterState) {
+			System.out.println("Received cluster state");
 			nodes.clear();
 			for (Member member : ((CurrentClusterState) message).getMembers()) {
+				System.out.println("Member:" + member.toString());
 				if (member.hasRole(ROLE) && member.status().equals(MemberStatus.up())) {
 					nodes.add(member.address());
 				}
