@@ -3,8 +3,8 @@ package com.redhat.services.akka;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
+import akka.routing.ConsistentHashingRouter.ConsistentHashableEnvelope;
 import akka.routing.FromConfig;
-import com.redhat.services.akka.HelloWorldWorker;
 
 public class HelloWorldService extends UntypedActor {
 
@@ -18,7 +18,7 @@ public class HelloWorldService extends UntypedActor {
 	public void onReceive(Object message) throws Throwable {
 		if (message instanceof String) {
 			System.out.println("Hello in service");
-			workerRouter.tell(message, sender());
+			workerRouter.tell(new ConsistentHashableEnvelope(message, message), sender());
 
 		} else {
 			unhandled(message);
