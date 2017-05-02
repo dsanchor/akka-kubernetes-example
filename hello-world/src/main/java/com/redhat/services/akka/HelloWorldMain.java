@@ -16,7 +16,7 @@ public class HelloWorldMain {
 		ActorSystem actorSystem = ActorSystem.create(getClusterName(), ConfigFactory.load("router.conf"));
 
 //		actorSystem.actorOf(Props.create(HelloWorldService.class), "helloWorldService");
-		actorSystem.actorOf(FromConfig.getInstance().props(Props.create(HelloWorldWorker.class)),
+		actorSystem.actorOf(Props.create(HelloWorldWorker.class),
 				"workerRouter");
 
 	//	actorSystem.actorOf(Props.create(HelloWorldWorker.class), "helloWorldWorker");
