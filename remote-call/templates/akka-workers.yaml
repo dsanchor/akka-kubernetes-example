@@ -34,6 +34,8 @@ spec:
           value: ""
         - name: REMOTE_SERVICE_PATH
           value: "/user/helloWorldService"
+        - name: REMOTE_SERVICE_ADDRESS
+          value: "akka.tcp://ClusterSystem@hello-world-akka-router-0.hello-world-akka-router:2551"
         livenessProbe:
           tcpSocket:
             port: 2551
