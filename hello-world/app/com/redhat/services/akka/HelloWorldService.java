@@ -27,20 +27,4 @@ public class HelloWorldService extends UntypedActor {
 
 	}
 
-//	@Override
-//	public Receive createReceive() {
-//		return receiveBuilder().match(StatsJob.class, job -> !job.getText().isEmpty(), job -> {
-//			String[] words = job.getText().split(" ");
-//			ActorRef replyTo = sender();
-//
-//			// create actor that collects replies from workers
-//			ActorRef aggregator = getContext().actorOf(Props.create(StatsAggregator.class, words.length, replyTo));
-//
-//			// send each word to a worker
-//			for (String word : words) {
-//				workerRouter.tell(new ConsistentHashableEnvelope(word, word), aggregator);
-//			}
-//		}).build();
-//	}
-
 }

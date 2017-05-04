@@ -1,0 +1,151 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: hello-world-akka
+  annotations:
+    description: Openshift template for demonstrating an akka cluster microservice
+    tags: akka,microservices
+    version: 0.0.1
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: ${MICROSERVICES_APP_NAME}
+    name: ${MICROSERVICES_APP_NAME}
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      app: ${MICROSERVICES_APP_NAME}
+    name: ${MICROSERVICES_APP_NAME}
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ${MICROSERVICES_APP_NAME}:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      binary: {}
+      type: Binary
+    strategy:
+      dockerStrategy: {}
+      type: Docker
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: ${MICROSERVICES_APP_NAME}
+    name: ${MICROSERVICES_APP_NAME}-master
+  spec:
+    ports:
+    - port: 2551
+      protocol: TCP
+      targetPort: 2551
+    selector:
+      run: ${MICROSERVICES_APP_NAME}-master
+    clusterIP: None
+- apiVersion: apps/v1beta1
+  kind: StatefulSet
+  metadata:
+    labels:
+      app: ${MICROSERVICES_APP_NAME}
+      run: ${MICROSERVICES_APP_NAME}-master
+    name: ${MICROSERVICES_APP_NAME}-master
+  spec:
+    serviceName: ${MICROSERVICES_APP_NAME}-master
+    replicas: 2
+    selector:
+      matchLabels:
+        run: ${MICROSERVICES_APP_NAME}-master
+    template:
+      metadata:
+        labels:
+          run: ${MICROSERVICES_APP_NAME}-master
+      spec:
+        containers:
+        - name: ${MICROSERVICES_APP_NAME}-master
+          image: ${IMAGE_REGISTRY}/${MICROSERVICES_APP_NAME}:latest
+          env:
+          - name: HOSTNAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: HOSTNAME_SUFFIX
+            value: ${HOSTNAME_SUFFIX}
+          - name: JAVA_OPTS
+            value: ${JAVA_OPTIONS_MASTER}
+          - name: CLUSTER
+            value: ${CLUSTER}
+          - name: APPLICATION_SECRET
+            value: ${APPLICATION_SECRET}
+          livenessProbe:
+            tcpSocket:
+              port: 2551
+          ports:
+          - containerPort: 2551
+            protocol: TCP
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: ${MICROSERVICES_APP_NAME}
+    name: ${MICROSERVICES_APP_NAME}-worker
+  spec:
+    replicas: 3
+    selector:
+      app: ${MICROSERVICES_APP_NAME}-worker
+    template:
+      metadata:
+        labels:
+          app: ${MICROSERVICES_APP_NAME}-worker
+      spec:
+        containers:
+        - name: ${MICROSERVICES_APP_NAME}-worker
+          image: ${IMAGE_REGISTRY}/${MICROSERVICES_APP_NAME}:latest
+          env:
+          - name: JAVA_OPTS
+            value: ${JAVA_OPTIONS_WORKER}
+          - name: CLUSTER
+            value: ${CLUSTER}
+	          - name: HOSTNAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: HOSTNAME_SUFFIX
+            value: ""
+          - name: APPLICATION_SECRET
+            value: ${APPLICATION_SECRET}
+          livenessProbe:
+            tcpSocket:
+              port: 2551
+          ports:
+          - containerPort: 2551
+            protocol: TCP
+parameters:
+- description: Microservices set name
+  name: MICROSERVICES_APP_NAME
+  required: true
+  value: hello-world-akka
+- description: Hostname suffix for the headless service 
+  name: HOSTNAME_SUFFIX
+  value: .hello-world-akka-master
+  required: true
+- description: Master nodes java options 
+  name: JAVA_OPTIONS_MASTER
+  value: "-Dakka.cluster.seed-nodes.0=akka.tcp://HelloworldSystem@hello-world-akka-master-0.hello-world-akka-master:2551 -Dakka.cluster.seed-nodes.1=akka.tcp://HelloworldSystem@hello-world-akka-master-1.hello-world-akka-master:2551"
+  required: true
+- description: Microservice akka cluster name
+  name: CLUSTER
+  value: HelloworldSystem
+  required: true
+- description: Worker nodes java options 
+  name: JAVA_OPTIONS_WORKER
+  value: "-Dakka.cluster.seed-nodes.0=akka.tcp://HelloworldSystem@hello-world-akka-master-0.hello-world-akka-master:2551 -Dakka.cluster.seed-nodes.1=akka.tcp://HelloworldSystem@hello-world-akka-master-1.hello-world-akka-master:2551 -Dakka.cluster.roles.1=hello-world"	
+- description: Image registry (172.30.1.1:5000/project)
+  name: IMAGE_REGISTRY
+  required: true
+
